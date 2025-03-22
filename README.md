@@ -3,4 +3,3 @@
 ## File directory
 - src : source code for each example
 - data : data for each example
-- ppt : presentation files for each example
