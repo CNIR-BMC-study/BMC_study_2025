@@ -47,6 +47,8 @@ class CRP:
             return self.beta_ll(clusters, feature)
         elif type == "gaussian":
             return self.gaussian_ll(clusters, feature)
+        elif type == "bayesian":
+            return self.baysian_ll(clusters, feature)
 
     def beta_ll(self, cluster, feature: Feature):
         if not self._clusters:
@@ -70,11 +72,11 @@ class CRP:
     def baysian_ll(self, cluster, feature: Feature):
         if not self._clusters:
             return 1e-8
-        s = cluster.cov() * cluster.n if cluster.n > 1 else np.zeors((feature.n, feature.n))
+        s = cluster.cov() * cluster.n if cluster.n > 1 else np.zeros((feature.n, feature.n))
         kappa_n = cluster.kappa0 + cluster.n
         nu_n = cluster.nu0 + cluster.n
         mu_n = (cluster.kappa0 * cluster.mean_prior + cluster.n * cluster.mean()) / kappa_n
-        psi_n = cluster.psi0 + s + (cluster.kappa0 * cluster.n) / (cluster.kapaa0 + cluster.n) * np.outer(cluster.mean() - cluster.mean_prior, cluster.mean() - cluster.mean_prior)
+        psi_n = cluster.psi0 + s + (cluster.kappa0 * cluster.n) / (cluster.kappa0 + cluster.n) * np.outer(cluster.mean() - cluster.mean_prior, cluster.mean() - cluster.mean_prior)
         cov_pred = psi_n * (kappa_n + 1) / (kappa_n * (nu_n - feature.n + 1))
         return multivariate_normal.pdf(feature.values, mu_n, cov_pred, allow_singular=True)
 
